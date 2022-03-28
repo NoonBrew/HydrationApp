@@ -16,7 +16,8 @@ class MainActivity : AppCompatActivity() {
         // WaterViewModelFactory has reference to the application and defines it as a
         // HydrationApplication that allows it to access the repository link of the application object
         // Application has access to the WaterDao and the WaterDatabase
-        WaterViewModelFactory((application as HydrationApplication).repository)
+        val app = application as HydrationApplication
+        WaterViewModelFactory(app.waterRepository, app.daysRepository)
             .create(WaterViewModel::class.java)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         waterTabLayout = findViewById(R.id.water_days_tab_layout)
 
         // Holds the string array
-        val days = resources.getStringArray(R.array.days)
+//        val days = resources.getStringArray(R.array.days)
+        val days = waterViewModel.getWeekdays()
         // Creates a instance of our WaterViewPageAdapter passing the activity that will display the
         // fragment (mainActivity) and the String Array that will be used to create new instances
         // of the fragments.
@@ -41,6 +43,9 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(waterTabLayout, waterViewPager) { tab, position ->
             tab.text = days[position]
         }.attach()
+
+        val todayIndex = waterViewModel.getTodayIndex()
+        waterViewPager.setCurrentItem(todayIndex, false)
 
 //        val tues = WaterRecord("Tuesday", 3)
 //        waterViewModel.insertNewRecord(tues)

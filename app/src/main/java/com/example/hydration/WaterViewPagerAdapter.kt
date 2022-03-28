@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 // Fragment activity is any activity that can display a fragment.
-class WaterViewPagerAdapter(activity: FragmentActivity, private val days: Array<String>):
+class WaterViewPagerAdapter(activity: FragmentActivity, private val days: List<String>):
     FragmentStateAdapter(activity) {
     override fun getItemCount(): Int {
         return days.size

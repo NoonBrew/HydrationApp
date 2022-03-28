@@ -4,40 +4,50 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
-class WaterViewModel(private val repository: WaterRepository): ViewModel() {
+class WaterViewModel(private val waterRepository: WaterRepository,
+                     private val daysRepository: DaysRepository): ViewModel() {
 
-    val allRecords = repository.getAllRecords().asLiveData()
+    val allRecords = waterRepository.getAllRecords().asLiveData()
 
     fun insertNewRecord(record: WaterRecord) {
         viewModelScope.launch { // Allows for a background function to be called by a non-background function
-            repository.insert(record)
+            waterRepository.insert(record)
         }
     }
 
     fun updateRecord(record: WaterRecord) {
         viewModelScope.launch {
-            repository.update(record)
+            waterRepository.update(record)
         }
     }
 
     fun deleteRecord(record: WaterRecord) {
         viewModelScope.launch {
-            repository.delete(record)
+            waterRepository.delete(record)
         }
     }
 
     fun getRecordForDay(day: String): LiveData<WaterRecord> {
-        return repository.getRecordForDay(day).asLiveData()
+        return waterRepository.getRecordForDay(day).asLiveData()
+    }
+
+    fun getWeekdays() :List<String> {
+        return daysRepository.weekdays
+    }
+
+    fun getTodayIndex(): Int {
+        return daysRepository.todayIndex
     }
 
 
 }
 
 // Class called by ViewModel provider to make view model objects.
-class WaterViewModelFactory(private val repository: WaterRepository): ViewModelProvider.Factory {
+class WaterViewModelFactory(private val waterRepository: WaterRepository,
+                            private val daysRepository: DaysRepository): ViewModelProvider.Factory {
     override fun <viewModel : ViewModel> create(modelClass: Class<viewModel>): viewModel {
         if (modelClass.isAssignableFrom(WaterViewModel::class.java)) {
-            return WaterViewModel(repository) as viewModel
+            return WaterViewModel(waterRepository, daysRepository) as viewModel
         }
         throw IllegalArgumentException("$modelClass is not a WaterViewModel")
     }

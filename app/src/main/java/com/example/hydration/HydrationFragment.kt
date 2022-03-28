@@ -31,7 +31,10 @@ class HydrationFragment : Fragment() {
         // WaterViewModelFactory has reference to the application and defines it as a
         // HydrationApplication that allows it to access the repository link of the application object
         // Application has access to the WaterDao and the WaterDatabase
-        WaterViewModelFactory((requireActivity().application as HydrationApplication).repository)
+
+        // Fragment would not let me create a val app = application as Hydration application to shorten the code
+        WaterViewModelFactory((requireActivity().application as HydrationApplication).waterRepository,
+            (requireActivity().application as HydrationApplication).daysRepository)
             .create(WaterViewModel::class.java)
     }
 
@@ -54,6 +57,9 @@ class HydrationFragment : Fragment() {
         waterRatingBar = view.findViewById(R.id.water_rating_bar)
         addGlassButton = view.findViewById(R.id.add_glass_button)
         resetGlassesButton = view.findViewById(R.id.reset_count_button)
+
+        waterRatingBar.numStars = WaterRecord.MAX_GLASSES // Number of stars shown
+        waterRatingBar.max = WaterRecord.MAX_GLASSES // Max
 
         waterViewModel.getRecordForDay(dayOfWeek).observe(requireActivity()) { databaseWaterRecord ->
             if (databaseWaterRecord == null) {
@@ -83,7 +89,7 @@ class HydrationFragment : Fragment() {
 
     private fun addGlass() {
         // add 1 to total glasses. five is the max
-        if (waterRecord.glasses < resources.getInteger(R.integer.max_glasses)) {
+        if (waterRecord.glasses < WaterRecord.MAX_GLASSES) {
             waterRecord.glasses++
             waterViewModel.updateRecord(waterRecord)
         }
