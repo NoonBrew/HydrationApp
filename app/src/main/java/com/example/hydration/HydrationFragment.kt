@@ -18,7 +18,7 @@ private const val ARG_DAY_OF_WEEK = "day_of_week"
  * create an instance of this fragment.
  */
 class HydrationFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private lateinit var dayOfWeek: String
 
     private lateinit var waterRatingBar: RatingBar
